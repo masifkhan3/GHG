@@ -12,7 +12,28 @@ def calculate_coal_emissions(amount_of_coal):
     n2o_emissions = amount_of_coal * emission_factor_coal_n2o  # in kg
     return co2_emissions, ch4_emissions, n2o_emissions
 
-# Other emission functions (biomass, gas, diesel) are the same as before
+# Function to calculate emissions for Hydrogen and CO
+def calculate_hydrogen_emissions(amount_of_hydrogen):
+    emission_factor_h2 = 0  # Hydrogen combustion produces no direct CO2
+    return amount_of_hydrogen * emission_factor_h2
+
+def calculate_co_emissions(amount_of_co):
+    emission_factor_co = 1.16  # kg CO per liter
+    return amount_of_co * emission_factor_co
+
+# Function to display images of gases
+def display_gas_image(gas_name):
+    gas_images = {
+        "CO2": "https://www.example.com/co2_image.png",  # Replace with the actual image URLs
+        "CH4": "https://www.example.com/ch4_image.png",
+        "N2O": "https://www.example.com/n2o_image.png",
+        "CO": "https://www.example.com/co_image.png",
+        "H2": "https://www.example.com/h2_image.png"
+    }
+    image_url = gas_images.get(gas_name, None)
+    if image_url:
+        image = Image.open(image_url)
+        st.image(image, caption=f"{gas_name} Gas")
 
 # Function to calculate total GHG emissions in CO2 equivalents
 def calculate_total_ghg(co2, ch4, n2o):
@@ -21,77 +42,63 @@ def calculate_total_ghg(co2, ch4, n2o):
     total_ghg = (co2 + ch4_co2e + n2o_co2e) / 1000  # Convert kg to mton
     return total_ghg
 
-# Function to compare GHG emissions with NEQ
-def compare_with_ne_quotient(total_ghg, neq):
-    if total_ghg > neq:
-        return "Total GHG emissions exceed the NEQ."
-    elif total_ghg < neq:
-        return "Total GHG emissions are below the NEQ."
-    else:
-        return "Total GHG emissions are equal to the NEQ."
-
 # Main Streamlit app
 def main():
-    st.title("Enhanced Greenhouse Gas Emission Dashboard")
-    st.write("Developed by [Your Name Here]")
-
-    # Sidebar for GHG calculations
-    st.sidebar.title("Emission Calculator")
-    amount_of_coal = st.sidebar.number_input("Enter coal burned (tons):", min_value=0.0, value=0.0)
-    amount_of_biomass = st.sidebar.number_input("Enter biomass burned (tons):", min_value=0.0, value=0.0)
-    amount_of_gas = st.sidebar.number_input("Enter natural gas burned (MMBtu):", min_value=0.0, value=0.0)
-    amount_of_diesel = st.sidebar.number_input("Enter diesel burned (liters):", min_value=0.0, value=0.0)
-    neq = st.sidebar.number_input("Enter National Emission Quotient (NEQ):", min_value=0.0, value=0.0)
+    st.title("Greenhouse Gas Emission Calculator Dashboard")
+    st.write("An interactive calculator for GHG emissions from various sources, including coal, biomass, natural gas, diesel oil, Carbon Monoxide (CO), and Hydrogen (H2).")
     
-    # Calculation
-    coal_emissions = calculate_coal_emissions(amount_of_coal)
-    biomass_emissions = calculate_biomass_emissions(amount_of_biomass)
-    gas_emissions = calculate_gas_emissions(amount_of_gas)
-    diesel_emissions = calculate_diesel_emissions(amount_of_diesel)
+    # Sidebar for general information
+    st.sidebar.header("Navigation")
+    st.sidebar.markdown("""
+        - **CO2, CH4, N2O** Emissions
+        - **CO** Emissions
+        - **H2** Emissions
+    """)
+    
+    # Sidebar for developer credits
+    st.sidebar.markdown("### Developed by")
+    st.sidebar.info("Your Name | Chemical Science and AI Enthusiast")
 
-    total_ghg = (
-        coal_emissions[0] + biomass_emissions[0] + gas_emissions[0] + diesel_emissions[0],
-        coal_emissions[1] + biomass_emissions[1] + gas_emissions[1] + diesel_emissions[1],
-        coal_emissions[2] + biomass_emissions[2] + gas_emissions[2] + diesel_emissions[2]
-    )
+    # Tabbed interface for different gases
+    tab1, tab2, tab3 = st.tabs(["CO2, CH4, N2O", "CO", "H2"])
 
-    total_ghg_value = calculate_total_ghg(total_ghg[0], total_ghg[1], total_ghg[2])
-    st.sidebar.write(f"Total GHG emissions: {total_ghg_value:.2f} mton CO2e")
-    comparison_result = compare_with_ne_quotient(total_ghg_value, neq)
-    st.sidebar.write(comparison_result)
+    # Tab 1: CO2, CH4, N2O emissions from coal, biomass, gas, diesel
+    with tab1:
+        st.subheader("CO2, CH4, N2O Emissions")
+        amount_of_coal = st.number_input("Enter the amount of coal burned (tons):", min_value=0.0, value=0.0)
+        coal_emissions = calculate_coal_emissions(amount_of_coal)
+        st.write(f"CO2 emissions from coal: {coal_emissions[0]/1000:.2f} mton CO2")
+        st.write(f"CH4 emissions from coal: {coal_emissions[1]/1000:.4f} mton CH4")
+        st.write(f"N2O emissions from coal: {coal_emissions[2]/1000:.4f} mton N2O")
+        
+        # Show images for gases
+        st.write("### Gas Images")
+        display_gas_image("CO2")
+        display_gas_image("CH4")
+        display_gas_image("N2O")
 
-    # Interactive Gas Dashboard
-    st.header("Gas Dashboard")
+    # Tab 2: Carbon Monoxide (CO) emissions
+    with tab2:
+        st.subheader("Carbon Monoxide (CO) Emissions")
+        amount_of_co = st.number_input("Enter the amount of CO emitted (liters):", min_value=0.0, value=0.0)
+        co_emissions = calculate_co_emissions(amount_of_co)
+        st.write(f"CO emissions: {co_emissions:.2f} kg CO")
+        
+        # Show image for CO gas
+        display_gas_image("CO")
 
-    gases = ["CO (Carbon Monoxide)", "H2 (Hydrogen)", "CH4 (Methane)", "CO2 (Carbon Dioxide)"]
-    selected_gas = st.selectbox("Select a gas to view details:", gases)
+    # Tab 3: Hydrogen (H2) emissions
+    with tab3:
+        st.subheader("Hydrogen (H2) Emissions")
+        amount_of_hydrogen = st.number_input("Enter the amount of Hydrogen burned (tons):", min_value=0.0, value=0.0)
+        h2_emissions = calculate_hydrogen_emissions(amount_of_hydrogen)
+        st.write(f"H2 emissions: {h2_emissions:.2f} kg H2 (No direct CO2 emissions from H2 combustion)")
 
-    if selected_gas == "CO (Carbon Monoxide)":
-        st.subheader("CO (Carbon Monoxide)")
-        st.write("Carbon monoxide (CO) is a colorless, odorless gas produced from the incomplete combustion of carbon-containing fuels.")
-        co_image = Image.open("path_to_co_image.jpg")  # Replace with your image path
-        st.image(co_image, caption="CO Molecule", use_column_width=True)
+        # Show image for H2 gas
+        display_gas_image("H2")
 
-    elif selected_gas == "H2 (Hydrogen)":
-        st.subheader("H2 (Hydrogen)")
-        st.write("Hydrogen (H2) is the lightest element and a clean fuel, emitting only water when burned.")
-        h2_image = Image.open("path_to_hydrogen_image.jpg")  # Replace with your image path
-        st.image(h2_image, caption="H2 Molecule", use_column_width=True)
+    # Footer
+    st.markdown("### Developed by [Your Name](https://your-website.com)")
 
-    elif selected_gas == "CH4 (Methane)":
-        st.subheader("CH4 (Methane)")
-        st.write("Methane (CH4) is a potent greenhouse gas emitted during the production and transport of coal, oil, and natural gas.")
-        ch4_image = Image.open("path_to_ch4_image.jpg")  # Replace with your image path
-        st.image(ch4_image, caption="CH4 Molecule", use_column_width=True)
-
-    elif selected_gas == "CO2 (Carbon Dioxide)":
-        st.subheader("CO2 (Carbon Dioxide)")
-        st.write("Carbon dioxide (CO2) is a greenhouse gas resulting primarily from burning fossil fuels and deforestation.")
-        co2_image = Image.open("path_to_co2_image.jpg")  # Replace with your image path
-        st.image(co2_image, caption="CO2 Molecule", use_column_width=True)
-
-    st.write("Use the sidebar to calculate greenhouse gas emissions from various fuel sources and compare them with the NEQ.")
-
-# Run the Streamlit app
 if __name__ == "__main__":
     main()
