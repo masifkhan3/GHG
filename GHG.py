@@ -57,37 +57,43 @@ def compare_with_ne_quotient(total_ghg, neq):
 def main():
     st.title("Greenhouse Gas Emission Calculator")
 
+    # Initialize emission variables
+    coal_emissions = (0, 0, 0)
+    biomass_emissions = (0, 0, 0)
+    gas_emissions = (0, 0, 0)
+    diesel_emissions = (0, 0, 0)
+
     # Input for coal
     amount_of_coal = st.number_input("Enter the amount of coal burned (tons):", min_value=0.0)
     if st.button("Calculate Coal Emissions"):
         coal_emissions = calculate_coal_emissions(amount_of_coal)
-        st.write(f"CO2 emissions from burning {amount_of_coal} tons of coal: {coal_emissions[0]/1000:.2f} mton CO2")
-        st.write(f"CH4 emissions from burning {amount_of_coal} tons of coal: {coal_emissions[1]/1000:.4f} mton CH4")
-        st.write(f"N2O emissions from burning {amount_of_coal} tons of coal: {coal_emissions[2]/1000:.4f} mton N2O")
+        st.write(f"CO2 emissions from burning {amount_of_coal} tons of coal: {coal_emissions[0] / 1000:.2f} mton CO2")
+        st.write(f"CH4 emissions from burning {amount_of_coal} tons of coal: {coal_emissions[1] / 1000:.4f} mton CH4")
+        st.write(f"N2O emissions from burning {amount_of_coal} tons of coal: {coal_emissions[2] / 1000:.4f} mton N2O")
 
     # Input for biomass
     amount_of_biomass = st.number_input("Enter the amount of biomass burned (tons):", min_value=0.0)
     if st.button("Calculate Biomass Emissions"):
         biomass_emissions = calculate_biomass_emissions(amount_of_biomass)
-        st.write(f"CO2 emissions from burning {amount_of_biomass} tons of biomass: {biomass_emissions[0]/1000:.2f} mton CO2")
-        st.write(f"CH4 emissions from burning {amount_of_biomass} tons of biomass: {biomass_emissions[1]/1000:.4f} mton CH4")
-        st.write(f"N2O emissions from burning {amount_of_biomass} tons of biomass: {biomass_emissions[2]/1000:.4f} mton N2O")
+        st.write(f"CO2 emissions from burning {amount_of_biomass} tons of biomass: {biomass_emissions[0] / 1000:.2f} mton CO2")
+        st.write(f"CH4 emissions from burning {amount_of_biomass} tons of biomass: {biomass_emissions[1] / 1000:.4f} mton CH4")
+        st.write(f"N2O emissions from burning {amount_of_biomass} tons of biomass: {biomass_emissions[2] / 1000:.4f} mton N2O")
 
     # Input for natural gas
     amount_of_gas = st.number_input("Enter the amount of natural gas burned (MMBtu):", min_value=0.0)
     if st.button("Calculate Natural Gas Emissions"):
         gas_emissions = calculate_gas_emissions(amount_of_gas)
-        st.write(f"CO2 emissions from burning {amount_of_gas} MMBtu of natural gas: {gas_emissions[0]/1000:.2f} mton CO2")
-        st.write(f"CH4 emissions from burning {amount_of_gas} MMBtu of natural gas: {gas_emissions[1]/1000:.4f} mton CH4")
-        st.write(f"N2O emissions from burning {amount_of_gas} MMBtu of natural gas: {gas_emissions[2]/1000:.4f} mton N2O")
+        st.write(f"CO2 emissions from burning {amount_of_gas} MMBtu of natural gas: {gas_emissions[0] / 1000:.2f} mton CO2")
+        st.write(f"CH4 emissions from burning {amount_of_gas} MMBtu of natural gas: {gas_emissions[1] / 1000:.4f} mton CH4")
+        st.write(f"N2O emissions from burning {amount_of_gas} MMBtu of natural gas: {gas_emissions[2] / 1000:.4f} mton N2O")
 
     # Input for diesel
     amount_of_diesel = st.number_input("Enter the amount of diesel oil burned (liters):", min_value=0.0)
     if st.button("Calculate Diesel Emissions"):
         diesel_emissions = calculate_diesel_emissions(amount_of_diesel)
-        st.write(f"CO2 emissions from burning {amount_of_diesel} liters of diesel: {diesel_emissions[0]/1000:.2f} mton CO2")
-        st.write(f"CH4 emissions from burning {amount_of_diesel} liters of diesel: {diesel_emissions[1]/1000:.4f} mton CH4")
-        st.write(f"N2O emissions from burning {amount_of_diesel} liters of diesel: {diesel_emissions[2]/1000:.4f} mton N2O")
+        st.write(f"CO2 emissions from burning {amount_of_diesel} liters of diesel: {diesel_emissions[0] / 1000:.2f} mton CO2")
+        st.write(f"CH4 emissions from burning {amount_of_diesel} liters of diesel: {diesel_emissions[1] / 1000:.4f} mton CH4")
+        st.write(f"N2O emissions from burning {amount_of_diesel} liters of diesel: {diesel_emissions[2] / 1000:.4f} mton N2O")
 
     # Calculate total GHG emissions
     if st.button("Calculate Total GHG Emissions"):
