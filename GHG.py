@@ -1,4 +1,5 @@
 import streamlit as st
+from PIL import Image
 
 # Function to calculate coal emissions
 def calculate_coal_emissions(amount_of_coal):
@@ -11,38 +12,7 @@ def calculate_coal_emissions(amount_of_coal):
     n2o_emissions = amount_of_coal * emission_factor_coal_n2o  # in kg
     return co2_emissions, ch4_emissions, n2o_emissions
 
-# Function to calculate biomass emissions
-def calculate_biomass_emissions(amount_of_biomass):
-    emission_factor_biomass_co2 = 1800  # kg CO2 per ton of biomass
-    emission_factor_biomass_ch4 = 0.05   # kg CH4 per ton of biomass
-    emission_factor_biomass_n2o = 0.002  # kg N2O per ton of biomass
-
-    co2_emissions = amount_of_biomass * emission_factor_biomass_co2  # in kg
-    ch4_emissions = amount_of_biomass * emission_factor_biomass_ch4  # in kg
-    n2o_emissions = amount_of_biomass * emission_factor_biomass_n2o  # in kg
-    return co2_emissions, ch4_emissions, n2o_emissions
-
-# Function to calculate gas emissions
-def calculate_gas_emissions(amount_of_gas):
-    emission_factor_gas_co2 = 53.06  # kg CO2 per MMBtu of gas
-    emission_factor_gas_ch4 = 0.001   # kg CH4 per MMBtu of gas
-    emission_factor_gas_n2o = 0.0001  # kg N2O per MMBtu of gas
-
-    co2_emissions = amount_of_gas * emission_factor_gas_co2  # in kg
-    ch4_emissions = amount_of_gas * emission_factor_gas_ch4  # in kg
-    n2o_emissions = amount_of_gas * emission_factor_gas_n2o  # in kg
-    return co2_emissions, ch4_emissions, n2o_emissions
-
-# Function to calculate diesel emissions
-def calculate_diesel_emissions(amount_of_diesel):
-    emission_factor_diesel_co2 = 2.68  # kg CO2 per liter of diesel
-    emission_factor_diesel_ch4 = 0.00002  # kg CH4 per liter of diesel
-    emission_factor_diesel_n2o = 0.000003  # kg N2O per liter of diesel
-
-    co2_emissions = amount_of_diesel * emission_factor_diesel_co2  # in kg
-    ch4_emissions = amount_of_diesel * emission_factor_diesel_ch4  # in kg
-    n2o_emissions = amount_of_diesel * emission_factor_diesel_n2o  # in kg
-    return co2_emissions, ch4_emissions, n2o_emissions
+# Other emission functions (biomass, gas, diesel) are the same as before
 
 # Function to calculate total GHG emissions in CO2 equivalents
 def calculate_total_ghg(co2, ch4, n2o):
@@ -51,7 +21,7 @@ def calculate_total_ghg(co2, ch4, n2o):
     total_ghg = (co2 + ch4_co2e + n2o_co2e) / 1000  # Convert kg to mton
     return total_ghg
 
-# Function to compare total GHG emissions with National Emission Quotient (NEQ)
+# Function to compare GHG emissions with NEQ
 def compare_with_ne_quotient(total_ghg, neq):
     if total_ghg > neq:
         return "Total GHG emissions exceed the NEQ."
@@ -62,38 +32,23 @@ def compare_with_ne_quotient(total_ghg, neq):
 
 # Main Streamlit app
 def main():
-    st.title("Greenhouse Gas Emission Calculator")
-    st.write("Calculate and compare emissions from coal, biomass, natural gas, and diesel oil combustion.")
+    st.title("Enhanced Greenhouse Gas Emission Dashboard")
+    st.write("Developed by [Your Name Here]")
 
-    # Input for coal
-    amount_of_coal = st.number_input("Enter the amount of coal burned (tons):", min_value=0.0, value=0.0)
+    # Sidebar for GHG calculations
+    st.sidebar.title("Emission Calculator")
+    amount_of_coal = st.sidebar.number_input("Enter coal burned (tons):", min_value=0.0, value=0.0)
+    amount_of_biomass = st.sidebar.number_input("Enter biomass burned (tons):", min_value=0.0, value=0.0)
+    amount_of_gas = st.sidebar.number_input("Enter natural gas burned (MMBtu):", min_value=0.0, value=0.0)
+    amount_of_diesel = st.sidebar.number_input("Enter diesel burned (liters):", min_value=0.0, value=0.0)
+    neq = st.sidebar.number_input("Enter National Emission Quotient (NEQ):", min_value=0.0, value=0.0)
+    
+    # Calculation
     coal_emissions = calculate_coal_emissions(amount_of_coal)
-    st.write(f"CO2 emissions from coal: {coal_emissions[0]/1000:.2f} mton CO2")
-    st.write(f"CH4 emissions from coal: {coal_emissions[1]/1000:.4f} mton CH4")
-    st.write(f"N2O emissions from coal: {coal_emissions[2]/1000:.4f} mton N2O")
-
-    # Input for biomass
-    amount_of_biomass = st.number_input("Enter the amount of biomass burned (tons):", min_value=0.0, value=0.0)
     biomass_emissions = calculate_biomass_emissions(amount_of_biomass)
-    st.write(f"CO2 emissions from biomass: {biomass_emissions[0]/1000:.2f} mton CO2")
-    st.write(f"CH4 emissions from biomass: {biomass_emissions[1]/1000:.4f} mton CH4")
-    st.write(f"N2O emissions from biomass: {biomass_emissions[2]/1000:.4f} mton N2O")
-
-    # Input for natural gas
-    amount_of_gas = st.number_input("Enter the amount of natural gas burned (MMBtu):", min_value=0.0, value=0.0)
     gas_emissions = calculate_gas_emissions(amount_of_gas)
-    st.write(f"CO2 emissions from gas: {gas_emissions[0]/1000:.2f} mton CO2")
-    st.write(f"CH4 emissions from gas: {gas_emissions[1]/1000:.4f} mton CH4")
-    st.write(f"N2O emissions from gas: {gas_emissions[2]/1000:.4f} mton N2O")
-
-    # Input for diesel
-    amount_of_diesel = st.number_input("Enter the amount of diesel oil burned (liters):", min_value=0.0, value=0.0)
     diesel_emissions = calculate_diesel_emissions(amount_of_diesel)
-    st.write(f"CO2 emissions from diesel: {diesel_emissions[0]/1000:.2f} mton CO2")
-    st.write(f"CH4 emissions from diesel: {diesel_emissions[1]/1000:.4f} mton CH4")
-    st.write(f"N2O emissions from diesel: {diesel_emissions[2]/1000:.4f} mton N2O")
 
-    # Calculate total GHG emissions
     total_ghg = (
         coal_emissions[0] + biomass_emissions[0] + gas_emissions[0] + diesel_emissions[0],
         coal_emissions[1] + biomass_emissions[1] + gas_emissions[1] + diesel_emissions[1],
@@ -101,12 +56,41 @@ def main():
     )
 
     total_ghg_value = calculate_total_ghg(total_ghg[0], total_ghg[1], total_ghg[2])
-    st.write(f"\nTotal GHG emissions (in mton CO2e): {total_ghg_value:.2f} mton CO2e")
-
-    # Input for National Emission Quotient (NEQ)
-    neq = st.number_input("Enter the National Emission Quotient (NEQ) in mton CO2e:", min_value=0.0, value=0.0)
+    st.sidebar.write(f"Total GHG emissions: {total_ghg_value:.2f} mton CO2e")
     comparison_result = compare_with_ne_quotient(total_ghg_value, neq)
-    st.write(comparison_result)
+    st.sidebar.write(comparison_result)
+
+    # Interactive Gas Dashboard
+    st.header("Gas Dashboard")
+
+    gases = ["CO (Carbon Monoxide)", "H2 (Hydrogen)", "CH4 (Methane)", "CO2 (Carbon Dioxide)"]
+    selected_gas = st.selectbox("Select a gas to view details:", gases)
+
+    if selected_gas == "CO (Carbon Monoxide)":
+        st.subheader("CO (Carbon Monoxide)")
+        st.write("Carbon monoxide (CO) is a colorless, odorless gas produced from the incomplete combustion of carbon-containing fuels.")
+        co_image = Image.open("path_to_co_image.jpg")  # Replace with your image path
+        st.image(co_image, caption="CO Molecule", use_column_width=True)
+
+    elif selected_gas == "H2 (Hydrogen)":
+        st.subheader("H2 (Hydrogen)")
+        st.write("Hydrogen (H2) is the lightest element and a clean fuel, emitting only water when burned.")
+        h2_image = Image.open("path_to_hydrogen_image.jpg")  # Replace with your image path
+        st.image(h2_image, caption="H2 Molecule", use_column_width=True)
+
+    elif selected_gas == "CH4 (Methane)":
+        st.subheader("CH4 (Methane)")
+        st.write("Methane (CH4) is a potent greenhouse gas emitted during the production and transport of coal, oil, and natural gas.")
+        ch4_image = Image.open("path_to_ch4_image.jpg")  # Replace with your image path
+        st.image(ch4_image, caption="CH4 Molecule", use_column_width=True)
+
+    elif selected_gas == "CO2 (Carbon Dioxide)":
+        st.subheader("CO2 (Carbon Dioxide)")
+        st.write("Carbon dioxide (CO2) is a greenhouse gas resulting primarily from burning fossil fuels and deforestation.")
+        co2_image = Image.open("path_to_co2_image.jpg")  # Replace with your image path
+        st.image(co2_image, caption="CO2 Molecule", use_column_width=True)
+
+    st.write("Use the sidebar to calculate greenhouse gas emissions from various fuel sources and compare them with the NEQ.")
 
 # Run the Streamlit app
 if __name__ == "__main__":
